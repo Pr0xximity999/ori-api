@@ -35,5 +35,7 @@ async fn index() -> Html<&'static str> {
     <meta property='og:image:width' content='400'>
     <meta property='og:image:height' content='400'>
 </head>
-<img src='https://http.cat/images/200.jpg'></img>")
+<body>
+    <img src='https://http.cat/images/200.jpg'></img>
+<body>")
 }

@@ -1,4 +1,4 @@
-name: Push and deploy to portainer
+name: Push docker image to public registry
 on:
   pull_request:
     branches: [ "main" ]

@@ -1,0 +1,7 @@
+services:
+  ori-api:
+    image: ori-api:latest
+    container_name: ori_api
+    restart: unless-stopped
+    ports:
+      - 3000:5483

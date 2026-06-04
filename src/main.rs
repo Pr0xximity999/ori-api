@@ -7,7 +7,7 @@ const DEFAULT_PORT: u16 = 5483;
 
 #[tokio::main]
 async fn main() {
-    
+
     // Get the port from the environment variable, otherwise use default
     let port = env::var("ORI_PORT")
         .ok()
@@ -26,5 +26,14 @@ async fn main() {
 }
 
 async fn index() -> Html<&'static str> {
-    Html("<img src='https://http.cat/images/200.jpg'></img>")
+    Html("
+    <head>
+    <meta property='og:type' content='website'>
+    <meta property='og:title' content='Ori API!'>
+    <meta property='og:description' content='Jarvis, show an embed with a status code 200 cate from the http.cat website'>
+    <meta property='og:image' content='https://http.cat/images/200.jpg'>
+    <meta property='og:image:width' content='400'>
+    <meta property='og:image:height' content='400'>
+</head>
+<img src='https://http.cat/images/200.jpg'></img>")
 }

@@ -7,6 +7,7 @@ const DEFAULT_PORT: u16 = 5483;
 
 #[tokio::main]
 async fn main() {
+    
     // Get the port from the environment variable, otherwise use default
     let port = env::var("ORI_PORT")
         .ok()

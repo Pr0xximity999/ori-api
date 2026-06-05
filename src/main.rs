@@ -48,7 +48,7 @@ async fn code(Path(code): Path<u16>) -> Html<String>
         <meta property='og:type' content='website'>
         <meta property='og:title' content='Ori API!'>
         <meta property='og:description' content='Jarvis, show an embed with a status code {code} cate from the http.cat website'>
-        <meta property='og:image' content='https://http.cat/{code}>
+        <meta property='og:image' content='https://http.cat/images/{code}.jpg>
         <meta property='og:image:width' content='400'>
         <meta property='og:image:height' content='400'>
     </head>

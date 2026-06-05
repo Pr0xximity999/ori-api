@@ -1,6 +1,6 @@
 use std::env;
 
-use axum::{Router, response::Html, routing::get};
+use axum::{Router, extract::Path, response::Html, routing::get};
 use tokio::net::TcpListener;
 
 const DEFAULT_PORT: u16 = 5483;
@@ -18,7 +18,8 @@ async fn main() {
 
     
     let app = Router::new()
-        .route("/", get(index));
+        .route("/", get(index))
+        .route("/code/{code}", get(code));
 
     
     let listener: TcpListener = tokio::net::TcpListener::bind(addr).await.unwrap();
@@ -31,11 +32,27 @@ async fn index() -> Html<&'static str> {
     <meta property='og:type' content='website'>
     <meta property='og:title' content='Ori API!'>
     <meta property='og:description' content='Jarvis, show an embed with a status code 200 cate from the http.cat website'>
-    <meta property='og:image' content='https://http.cat/images/200.jpg'>
+    <meta property='og:image' content='https://http.cat/200>
     <meta property='og:image:width' content='400'>
     <meta property='og:image:height' content='400'>
 </head>
 <body>
-    <img src='https://http.cat/images/200.jpg'></img>
+    <img src='https://http.cat/200'></img>
 <body>")
+}
+
+async fn code(Path(code): Path<u16>) -> Html<String>
+{
+    let hypertext = format!("
+    <head>
+        <meta property='og:type' content='website'>
+        <meta property='og:title' content='Ori API!'>
+        <meta property='og:description' content='Jarvis, show an embed with a status code 200 cate from the http.cat website'>
+        <meta property='og:image' content='https://http.cat/{code}>
+        <meta property='og:image:width' content='400'>
+        <meta property='og:image:height' content='400'>
+    </head>
+    <img src='https://http.cat/{code}'></img>
+    ");
+    Html(hypertext)
 }

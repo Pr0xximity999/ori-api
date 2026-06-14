@@ -1,6 +1,7 @@
 services:
   ori-api:
     image: ori-api:latest
+    build: .
     container_name: ori_api
     restart: unless-stopped
     ports:

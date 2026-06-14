@@ -1,9 +1,14 @@
 use std::env;
-
-use axum::{Router, extract::Path, response::Html, routing::get};
+use axum::{
+    Router, extract::Path, http::StatusCode, response::{Html, IntoResponse, Json}, routing::get};
+use rusqlite::Connection;
+use serde_json::json;
 use tokio::net::TcpListener;
 
+use crate::models::Sentence;
 const DEFAULT_PORT: u16 = 5483;
+
+mod models;
 
 #[tokio::main]
 async fn main() {
@@ -15,33 +20,19 @@ async fn main() {
         .unwrap_or(DEFAULT_PORT);
 
     let addr = format!("0.0.0.0:{port}");
-
     
     let app = Router::new()
-        .route("/", get(index))
-        .route("/code/{code}", get(code));
+        .route("/", get(code(Path(404)).await))
+        .route("/code/{code}", get(code))
+        .route("/zin/all",get(sentence_all))
+        .fallback(code(Path(404)).await);
 
     
     let listener: TcpListener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn index() -> Html<&'static str> {
-    Html("
-    <head>
-    <meta property='og:type' content='website'>
-    <meta property='og:title' content='Ori API!'>
-    <meta property='og:description' content='Jarvis, show an embed with a status code 200 cate from the http.cat website'>
-    <meta property='og:image' content='https://http.cat/200'>
-    <meta property='og:image:width' content='400'>
-    <meta property='og:image:height' content='400'>
-</head>
-<body>
-    <img src='https://http.cat/200'></img>
-<body>")
-}
-
-async fn code(Path(code): Path<u16>) -> Html<String>
+async fn code(Path(code): Path<u16>) -> (StatusCode, Html<String>)
 {
     let hypertext = format!("
     <head>
@@ -54,5 +45,32 @@ async fn code(Path(code): Path<u16>) -> Html<String>
     </head>
     <img src='https://http.cat/{code}'></img>
     ");
-    Html(hypertext)
+    (StatusCode::from_u16(code).unwrap(), Html(hypertext))
+}
+
+async fn sentence_all() -> Result<impl IntoResponse, Json<String>>
+{
+    // Estrablish connection
+    let connection = Connection::open("batadase.db").unwrap();
+
+    // Prepare query
+    let query = "SELECT * FROM Sentences";
+    let mut statement = connection.prepare(query).unwrap();
+
+    // Query database
+    let rows = statement.query_map([], |row| {
+        Ok(Sentence {
+            sentence: row.get(0)?
+        })
+    }).unwrap();
+
+    let mut sentences = Vec::new();
+    sentences.push(Sentence {sentence: "You're not supposed to be here".to_owned() });
+    for sentence in rows {
+        sentences.push(sentence.unwrap());
+    }
+
+    
+    // Return data
+    Ok(Json(json!({"sentences" : sentences})))
 }

@@ -22,7 +22,7 @@ async fn main() {
     let addr = format!("0.0.0.0:{port}");
     
     let app = Router::new()
-        .route("/", get(code(Path(404)).await))
+        .route("/", get(code(Path(200)).await))
         .route("/code/{code}", get(code))
         .route("/zin/all",get(sentence_all))
         .fallback(code(Path(404)).await);

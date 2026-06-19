@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, sqlx::FromRow)]
 pub struct Sentence {
+    pub id: String,
     pub sentence : String
 }

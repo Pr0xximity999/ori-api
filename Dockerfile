@@ -7,9 +7,12 @@ RUN rustup target add x86_64-unknown-linux-musl && \
 COPY ./src ./src
 COPY ./Cargo.lock .
 COPY ./Cargo.toml .
+COPY ./.env .
+COPY ./.sqlx ./.sqlx
 
 RUN adduser --disabled-password --gecos "" --shell "/sbin/nologin" --no-create-home --uid 10001 "ori-api"
 
+ENV SQLX_OFFLINE=true
 RUN cargo build --target x86_64-unknown-linux-musl --release
 
 FROM rust:1.96-alpine3.21
@@ -18,6 +21,5 @@ COPY --from=build /etc/group /etc/group
 
 USER ori-api:ori-api
 COPY --from=build --chown=ori-api:ori-api ./target/x86_64-unknown-linux-musl/release/ori-api /app/ori-api
-COPY --from=build ./src/batadase.db .
 
 ENTRYPOINT [ "./app/ori-api" ]
